@@ -110,5 +110,5 @@ class EegFilter:
             self.del_pick()
         return (self.trend, self.del_pick_data)
 
-    def All_processing(self) -> None:
+    def all_processing(self) -> None:
         self.del_pick()
