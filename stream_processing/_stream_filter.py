@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 
-from filters import EegFilter
+from eeg_filter.filters import EegFilter
 
 
 
