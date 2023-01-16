@@ -63,5 +63,5 @@ if __name__ == "__main__":
     #Фильтрация нескольких файлов по указанному пути
     #sp.stream_filter(path)
     
-    ploting.ploter(X2)
+    #ploting.ploter(X2)
     
