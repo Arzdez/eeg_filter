@@ -94,7 +94,7 @@ class EegFilter:
         shape = np.shape(self.del_pick_data)
 
         for i in range(1, shape[1]):
-            means = 10000*mean(self.del_pick_data[:, i])
+            means = 100000*mean(self.del_pick_data[:, i])
             print(means)
 
             for j in range(shape[0] - 1):
