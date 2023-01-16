@@ -5,12 +5,12 @@ from statistics import mean
 class EegFilter:
     """
     Класс предобработки ЭЭГ
-    На вход подаётся файл ЭЭГ для которого создаётся экземпляр класса и при желании размер окна w - !!именованный аргумент!!, значение по умолчанию 1501. 
+    На вход подаётся файл ЭЭГ для которого создаётся экземпляр класса и при желании размер окна w - !!именованный аргумент!!, значение по умолчанию 1501.
 
     После можно вызывать нужные методы
     _moving_avg и _detrending - вспомагательные методы, считают скользящую среднюю и вычитают тренд соответсвенно
-    
-    
+
+
 
     S_moving_avg- метод считает и возвращает скользящуюю среднюю - self.trend
     detrend - метод вычитает тренд и взворащает детрендированный ряд но единичные пики не удаляются - self.detrend_data
@@ -35,7 +35,7 @@ class EegFilter:
         self._Half = int(self.W / 2)
         if self.W % 2 == 0:
             self._Half -= 1
-            
+
         self.EEG_data = EEG_data
         self.trend = np.zeros(
             (np.shape(self.EEG_data)[0] - self.W + 1, np.shape(self.EEG_data)[1])
@@ -46,13 +46,13 @@ class EegFilter:
         self.del_pick_data = None
 
     # Скользящее среднее
-    def _moving_avg(self, x, w=1501) -> list:
+    def _moving_avg(self, x, w=1501):
 
         cumsum = np.cumsum(np.insert(x, 0, 0))
         return (cumsum[w:] - cumsum[:-w]) / float(w)
 
     # вычитание тренда X - исходный ряд, Y - скользящее среднее, W - окно
-    def _detrending(self, x, y, w) -> list:
+    def _detrending(self, x, y, w):
 
         w2 = int(w / 2)
         X_detred = []
@@ -63,6 +63,7 @@ class EegFilter:
 
         return X_detred
 
+    # Расчтё скользящего среднего для указанного ряда
     def moving_avg(self) -> list:
         # Заполняем таймлайн
         self.trend[:, 0] = self.EEG_data[
@@ -74,6 +75,7 @@ class EegFilter:
 
         return self.trend
 
+    # Вычитание тренда
     def detrend(self) -> list:
         # инициализируем значение тренда
         self.moving_avg()
@@ -89,17 +91,19 @@ class EegFilter:
 
         return self.detrend_data
 
+    # Удаление пиков
     def del_pick(self) -> list:
         self.del_pick_data = self.detrend()
         shape = np.shape(self.del_pick_data)
 
         for i in range(1, shape[1]):
-            means = 100000*mean(self.del_pick_data[:, i])
+            # Если пик в 100000 раз больше среднего - удаляем
+            means = 100000 * mean(self.del_pick_data[:, i])
             print(means)
 
             for j in range(shape[0] - 1):
                 if self.del_pick_data[j, i] > means:
-                    #print("удаляю пик")
+                    # print("удаляю пик")
                     self.del_pick_data[j, i] = (
                         self.del_pick_data[j - 1, i] + self.del_pick_data[j + 1, i]
                     ) / 2

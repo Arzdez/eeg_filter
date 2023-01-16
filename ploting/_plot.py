@@ -9,7 +9,13 @@ import shutil
 #@deco_time
 def png_ploting(path: str) -> None:
     """Создаёт график 4ёх каналов файла PGC и схораняет в PNG"""
-    chanels = ["time", "Cd R", "Cd L", "Cx occip R", "Cx occip L"]
+    chanels =[
+        "time",
+        "Cd R",
+        "Cd L",
+        "Cx occip R",
+        "Cx occip L",
+    ]
     os.chdir(path)
 
     for root, dirs, files in os.walk(".", topdown=False):
@@ -69,7 +75,13 @@ def ploter(X: list) -> None:
     """
     Рисует 4 канала данных из PGC
     """
-    chanels = ["time", "Cd R", "Cd L", "Cx occip R", "Cx occip L"]
+    chanels = [
+        "time",
+        "Cd R",
+        "Cd L",
+        "Cx occip R",
+        "Cx occip L",
+    ]
     #X = np.loadtxt(path)
     plt.subplot(4, 1, 1)
     plt.title(f"{chanels[1]}")

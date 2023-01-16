@@ -6,7 +6,11 @@ from eeg_filter.filters import EegFilter
 
 
 
-def stream_filter(path: str, *, ploting: bool = False, chanels: tuple = None, window: int = 1501) -> None:
+def stream_filter(
+    path: str, *,
+    ploting: bool = False,
+    chanels: tuple = None,
+    window: int = 1501) -> None:
     """
     Обрабатывает все .txt файлы по указанному пути.
     Если файлы лежат в поддиректориях то структура останется. 
@@ -22,7 +26,14 @@ def stream_filter(path: str, *, ploting: bool = False, chanels: tuple = None, wi
     """
     #Имена отведений
     if chanels is None:
-        chanels = ("time", "Cd_R", "Cd_L", "Cx_occip_R", "Cx_occip_L")
+        chanels = (
+            "time", 
+            "Cd_R", 
+            "Cd_L", 
+            "Cx_occip_R", 
+            "Cx_occip_L"
+        )
+        
         
     window = 1501
     os.chdir(path)
