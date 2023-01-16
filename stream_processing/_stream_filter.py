@@ -36,7 +36,7 @@ def stream_filter(path: str, *, ploting: bool = False, chanels: tuple = None, wi
                 ready_data = EegFilter(input_data, w = window)
                 ready_data.All_processing()
                 trend = ready_data.trend
-                detrend_data = ready_data.detrend_data
+                detrend_data = ready_data.del_pick_data
 
                 times = detrend_data[:,0]
                 if ploting:
