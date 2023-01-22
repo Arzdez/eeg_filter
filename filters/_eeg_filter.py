@@ -55,11 +55,7 @@ class EegFilter:
     def _detrending(self, x, y, w):
 
         w2 = int(w / 2)
-        X_detred = []
-
-        # Вычитаем тренд
-        for i in range(len(y)):
-            X_detred.append(x[i + w2] - y[i])
+        X_detred = np.subtract(x[w2:len(x)-w2],y)
 
         return X_detred
 

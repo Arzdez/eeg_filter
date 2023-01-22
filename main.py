@@ -17,9 +17,9 @@ import eeg_filter.ploting as ploting
 if __name__ == "__main__":
     
     #Пути к файлам 
-    X = np.loadtxt(r"C:\Users\insec\Desktop\Mous\RD\РД-амигдала-М1\281-19.07.18\RD_Am_R.txt")
-    path = r"C:\Users\insec\Desktop\Mous\RD\РД-амигдала-М1"
-    path_archive = r"C:\Users\insec\Desktop\Mous\arch"
+    X = np.loadtxt(r"C:\Users\Arzdez\Desktop\eeg_filter\274-19.06\baseline.txt")
+    #path = r"C:\Users\insec\Desktop\Mous\RD\РД-амигдала-М1"
+    #path_archive = r"C:\Users\insec\Desktop\Mous\arch"
     
     #Изменение точек на запятые
     #pgc.comma_to_dot(path)
@@ -57,7 +57,7 @@ if __name__ == "__main__":
     #f_data.trend
     
     #Обращение к атрибуту содержащему детрендированный сигнал 
-    #f_data.detrend_data
+    #X2 = f_data.detrend_data
     
 #--------------------------------------------------------------------------------------------------------------------
     #Фильтрация нескольких файлов по указанному пути
