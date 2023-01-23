@@ -95,7 +95,7 @@ class EegFilter:
         for i in range(1, shape[1]):
             # Если пик в 100000 раз больше среднего - удаляем
             means = 100000 * mean(self.del_pick_data[:, i])
-            print(means)
+            #print(means)
 
             for j in range(shape[0] - 1):
                 if self.del_pick_data[j, i] > means:

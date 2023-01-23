@@ -41,6 +41,7 @@ def stream_filter(
     for root, dirs, files in os.walk(".", topdown=False):
         for name in files:
             if ".txt" in name:
+                print("Обрабатывается файл:" , os.path.join(root, name))
                 input_data = np.loadtxt(os.path.join(root, name))
                 time = input_data[:, 0]
                 
