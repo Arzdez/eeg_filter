@@ -26,6 +26,7 @@ def comma_to_dot(
 
     for root, dirs, files in os.walk(".", topdown=False):
         for name in files:
+            print("Обрабатывается файл:" , os.path.join(root, name))
             file = open(os.path.join(root, name), "r")
             text = file.readlines()
 
