@@ -45,7 +45,7 @@ def stream_filter(
                 time = input_data[:, 0]
                 
                 ready_data = EegFilter(input_data, w = window)
-                ready_data.All_processing()
+                ready_data.all_processing()
                 trend = ready_data.trend
                 detrend_data = ready_data.del_pick_data
 
