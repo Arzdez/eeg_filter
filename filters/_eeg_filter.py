@@ -43,9 +43,11 @@ class EegFilter:
         self.trend = np.zeros(
             (np.shape(self.EEG_data)[0] - self.W + 1, np.shape(self.EEG_data)[1])
         )
+        
         self.detrend_data = np.zeros(
             (np.shape(self.EEG_data)[0] - self.W + 1, np.shape(self.EEG_data)[1])
         )
+        
         self.del_pick_data = None
         
         self.clear_data = np.zeros(
@@ -61,7 +63,7 @@ class EegFilter:
     # вычитание тренда X - исходный ряд, Y - скользящее среднее, W - окно
     def _detrending(self, x, y, w):
 
-        w2 = int(w / 2)
+        w2 = w // 2
         X_detred = np.subtract(x[w2:len(x)-w2],y)
 
         return X_detred
@@ -104,7 +106,8 @@ class EegFilter:
     # Вычитание тренда
     def detrend(self) -> list:
         #инициализируем значение тренда
-        self.moving_avg()
+        if trend.any() == 0:
+            self.moving_avg()
         # Заполняем таймлайн
         self.detrend_data[:, 0] = self.EEG_data[
             self._Half : len(self.EEG_data) - self._Half, 0
@@ -123,10 +126,6 @@ class EegFilter:
         shape = np.shape(self.del_pick_data)
 
         for i in range(1, shape[1]):
-            # Если пик в 100000 раз больше среднего - удаляем
-            #means = 100000 * mean(self.del_pick_data[:, i])
-            #print(means)
-
             for j in range(shape[0] - 1):
                 if abs(self.del_pick_data[j, i]) > 1:
                     print(f"удаляю пик{j}")
@@ -143,23 +142,14 @@ class EegFilter:
         
         if self.del_pick_data is None:
             for i in range(1, np.shape(self.detrend_data)[1]):
-                self.clear_data[:, i] = self._fourier(self.detrend_data[:, i], sample_rate, target_hz_1 = target_hz_1, target_hz_2 = target_hz_2).real
+                self.clear_data[:, i] = self._fourier(self.detrend_data[:, i], sample_rate, target_hz_1 = target_hz_1, target_hz_2 = target_hz_2)
         
         else:
             for i in range(1, np.shape(self.del_pick_data)[1]):
-                self.clear_data[:, i] = self._fourier(self.del_pick_data[:, i], sample_rate, target_hz_1 = target_hz_1, target_hz_2 = target_hz_2).real
+                self.clear_data[:, i] = self._fourier(self.del_pick_data[:, i], sample_rate, target_hz_1 = target_hz_1, target_hz_2 = target_hz_2)
             
         return self.clear_data
                 
-                
-                
-    def get_data(self) -> tuple:
-        if self.del_pick_data == None:
-            self.del_pick()
-        return (self.trend, self.del_pick_data)
-
-    def all_processing(self) -> None:
-        self.del_pick()
         
 
     def plot_ft(self, name_, sample_rate,*, line_num = 1, show_all = False):
