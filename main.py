@@ -18,7 +18,7 @@ import eeg_filter.ploting as ploting
 if __name__ == "__main__":
 
     #Пути к файлам 
-    #X = np.loadtxt(r"C:\Users\insec\Desktop\Тесты обработки\РД-амигдала-М1\281-10.07.18\RD_Am_R+.txt")
+    X = np.loadtxt(r"C:\Users\insec\Desktop\Тесты обработки\РД-амигдала-М1\281-10.07.18\RD_Am_R+.txt")
     #path = r"C:\Users\insec\Desktop\Тесты обработки\РД-амигдала-М1"
     #path_copy = r"C:\Users\insec\Desktop\Тесты обработки\РД-амигдала-М1_copy"
     #sample_rate = 1000
@@ -71,4 +71,3 @@ if __name__ == "__main__":
 # Вывод графика
     #ploting.ploter(X)
     #f_data.plot_ft("clear_data", sample_rate)
-    
