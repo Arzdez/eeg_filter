@@ -46,8 +46,9 @@ class EegFilter:
             (np.shape(self.EEG_data)[0] - self.W + 1, np.shape(self.EEG_data)[1])
         )
         self.del_pick_data = None
+        
         self.clear_data = np.zeros(
-            (np.shape(self.EEG_data)[0] - self.W + 1, np.shape(self.EEG_data)[1])
+            (np.shape(self.EEG_data)[0] - self.W + 1, np.shape(self.EEG_data)[1]), dtype = np.complex128
         )
 
     # Скользящее среднее
@@ -63,7 +64,31 @@ class EegFilter:
         X_detred = np.subtract(x[w2:len(x)-w2],y)
 
         return X_detred
-    # Расчтё скользящего среднего для указанного ряда
+    
+    #фурье преобразование
+    def _fourier(self, x, sample_rate,*, target_hz_1, target_hz_2):
+        time_step = 1/sample_rate
+        N = len(x)
+        #Фурье образ
+        yf = fft(x)
+        #Часты
+        xf = fftfreq(N, time_step)[:N//2]
+        #Зануляем ненужные частоты
+        points_per_gZ = len(xf)/(sample_rate/2)
+        #Убираем 50+-1 герц 
+        target_GZ_1 = int(points_per_gZ  *  (target_hz_1 - 1))
+        target_GZ_2 = int(points_per_gZ  * (target_hz_1 + 1))
+
+        yf[target_GZ_1:target_GZ_2] = 0
+        
+        if not(target_hz_2 is None):
+            target_GZ_3 = int(points_per_gZ  * 99)
+            yf[target_GZ_3:] = 0
+        
+        s = ifft(yf)
+        return s
+    
+    # Расчёт скользящего среднего для указанного ряда 
     def moving_avg(self) -> list:
         # Заполняем таймлайн
         self.trend[:, 0] = self.EEG_data[
@@ -110,10 +135,23 @@ class EegFilter:
 
         return self.del_pick_data
     
-
-            
+    def frequency_filter(self, sample_rate,*, target_hz_1 = 50, target_hz_2 = None):
+        self.clear_data[:, 0] = self.EEG_data[
+            self._Half : len(self.EEG_data) - self._Half, 0
+        ]
         
-
+        if self.del_pick_data is None:
+            for i in range(1, np.shape(self.detrend_data)[1]):
+                self.clear_data[:, i] = self._fourier(self.detrend_data[:, i], sample_rate, target_hz_1 = target_hz_1, target_hz_2 = target_hz_2).real
+        
+        else:
+            for i in range(1, np.shape(self.del_pick_data)[1]):
+                self.clear_data[:, i] = self._fourier(self.del_pick_data[:, i], sample_rate, target_hz_1 = target_hz_1, target_hz_2 = target_hz_2).real
+            
+        return self.clear_data
+                
+                
+                
     def get_data(self) -> tuple:
         if self.del_pick_data == None:
             self.del_pick()
@@ -121,10 +159,130 @@ class EegFilter:
 
     def all_processing(self) -> None:
         self.del_pick()
+        
 
+    def plot_ft(self, name_, sample_rate,*, line_num = 1, show_all = False):
+        """
+        Рисует спектр сигналов
+        name_ - какую версию сигнала отбразить
+        sample_rate - частота дескритезации 
+        line_num - если параметр show_all - False - выводит отведение под указанным номером
+        show_all - если true - выводит все 4 отведения сигнала
+        """
+        if name_ == "EEG_data":
+            time_step = 1/sample_rate
+            
+            plot_data = np.zeros(
+            (np.shape(self.EEG_data)[0] , np.shape(self.EEG_data)[1])
+        )   
+            N = len(self.EEG_data[:,0])
+            plot_data[:, 0] = fftfreq(N, time_step)#[:N//2]
+            
+            for i in range(1, np.shape(self.EEG_data)[1]):
+                
+                #Фурье образ
+                plot_data[:, i] = fft(self.EEG_data[:,i])
+                #Частоты
+            
+            
 
+            if show_all:
+                
+                plt.subplot(4,1,1)
+                plt.plot(plot_data[:N//2, 0], 2./N * np.abs(plot_data[0:N//2, 1]))
+                
+                plt.subplot(4,1,2)
+                plt.plot(plot_data[:N//2, 0], 2./N * np.abs(plot_data[0:N//2, 2]))
+                
+                plt.subplot(4,1,3)
+                plt.plot(plot_data[:N//2, 0], 2./N * np.abs(plot_data[0:N//2, 3]))
+                
+                plt.subplot(4,1,4)
+                plt.plot(plot_data[:N//2, 0], 2./N * np.abs(plot_data[0:N//2, 4]))
+                plt.show()
+            
+            else:
+                plt.plot(plot_data[:N//2, 0], 2./N * np.abs(plot_data[0:N//2, line_num]))
+                plt.show()
+                    
+            
+            
+    
+        elif name_ == "detrend_data":
+            time_step = 1/sample_rate
+            
+            plot_data = np.zeros(
+            (np.shape(self.detrend_data)[0], np.shape(self.detrend_data)[1]), dtype = np.complex128
+        )
+            N = len(self.detrend_data)
+            plot_data[:, 0] = fftfreq(N, time_step)#[:N//2]
+            
+            for i in range(1, np.shape(self.detrend_data)[1]):
+                #Фурье образ
+                plot_data[:, i] = fft(self.detrend_data[:,i])
+            
+            
 
-def furier(X, sample_rate, plot_spectrum  = False ):
+            if show_all:
+                
+                plt.subplot(4,1,1)
+                plt.plot(plot_data[:N//2, 0], 2./N * np.abs(plot_data[0:N//2, 1]))
+                
+                plt.subplot(4,1,2)
+                plt.plot(plot_data[:N//2, 0], 2./N * np.abs(plot_data[0:N//2, 2]))
+                
+                plt.subplot(4,1,3)
+                plt.plot(plot_data[:N//2, 0], 2./N * np.abs(plot_data[0:N//2, 3]))
+                
+                plt.subplot(4,1,4)
+                plt.plot(plot_data[:N//2, 0], 2./N * np.abs(plot_data[0:N//2, 4]))
+                plt.show()
+            
+            else:
+                plt.plot(plot_data[:N//2, 0], 2./N * np.abs(plot_data[0:N//2, line_num]))
+                plt.show()
+                    
+            
+        elif name_ == "clear_data":
+            time_step = 1/sample_rate
+            
+            plot_data = np.zeros(
+            (np.shape(self.clear_data)[0], np.shape(self.clear_data)[1]), dtype = np.complex128
+        )
+            N = len(self.clear_data)
+            plot_data[:, 0] = fftfreq(N, time_step)#[:N//2]
+            for i in range(1, np.shape(self.clear_data)[1]):
+                #Фурье образ
+                plot_data[:, i] = fft(self.clear_data[:,i])
+
+            
+            
+
+            if show_all:
+                
+                plt.subplot(4,1,1)
+                plt.plot(plot_data[:N//2, 0], 2./N * np.abs(plot_data[0:N//2, 1]))
+                
+                plt.subplot(4,1,2)
+                plt.plot(plot_data[:N//2, 0], 2./N * np.abs(plot_data[0:N//2, 2]))
+                
+                plt.subplot(4,1,3)
+                plt.plot(plot_data[:N//2, 0], 2./N * np.abs(plot_data[0:N//2, 3]))
+                
+                plt.subplot(4,1,4)
+                plt.plot(plot_data[:N//2, 0], 2./N * np.abs(plot_data[0:N//2, 4]))
+                plt.show()
+            
+            else:
+                plt.plot(plot_data[:N//2, 0], 2./N * np.abs(plot_data[0:N//2, line_num]))
+                plt.show()
+            
+            
+            
+        
+        
+
+def furier(X, sample_rate):
     time_step = 1/sample_rate
     N = len(X)
     #Фурье образ
@@ -142,9 +300,9 @@ def furier(X, sample_rate, plot_spectrum  = False ):
     yf[target_GZ_3:] = 0
     
     #убираем всё от 99 герц
-    if plot_spectrum:
-        plt.plot(xf, 2./N * np.abs(yf[0:N//2]))
-        plt.show()
+
+    plt.plot(xf, 2./N * np.abs(yf[0:N//2]))
+    plt.show()
     
     return ifft(yf)
         

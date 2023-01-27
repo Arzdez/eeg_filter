@@ -10,7 +10,8 @@ def stream_filter(
     path: str, *,
     ploting: bool = False,
     chanels: tuple = None,
-    window: int = 1501) -> None:
+    window: int = 1501,
+    sample_rate = 1000 ) -> None:
     """
     Обрабатывает все .txt файлы по указанному пути.
     Если файлы лежат в поддиректориях то структура останется. 
@@ -47,25 +48,26 @@ def stream_filter(
                 
                 ready_data = EegFilter(input_data, w = window)
                 ready_data.detrend()
+                ready_data.frequency_filter(sample_rate)
                 trend = ready_data.trend
-                detrend_data = ready_data.detrend_data
+                clear_data= ready_data.clear_data
 
-                times = detrend_data[:,0]
+                times = clear_data[:,0]
                 if ploting:
                     for i in range(1, np.shape(input_data)[1]):
                         plt.subplot(2, 1, 1)
                         plt.title(f"Тренд  {chanels[i]}")
                         plt.plot(times, trend[:, i])
                         plt.subplot(2, 1, 2)
-                        plt.title(f"Детрендированный сигнал {chanels[i]} ")
-                        plt.plot(times, detrend_data[:, i])
+                        plt.title(f"Отфильтрованный сигнал {chanels[i]} ")
+                        plt.plot(times, clear_data[:, i])
                         plt.tight_layout()
                         plt.savefig(os.path.join(root, name.replace(".txt", "")) + root.replace('\\', '_') + f"_{chanels[i]}.png", dpi=1000)
                         plt.close()
                     
                 #Сохраняем ряд
                 np.savetxt(os.path.join(root, name.replace(".txt", root.replace("\\", "")+"_trend.txt")), trend)
-                np.savetxt(os.path.join(root, name.replace(".txt", "_detrend.txt")), detrend_data)
+                np.savetxt(os.path.join(root, name.replace(".txt", root.replace("\\", "")+"_clear.txt")), clear_data)
 
 
 
