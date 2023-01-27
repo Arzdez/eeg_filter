@@ -4,20 +4,15 @@ from shutil import copytree
 import bz2
 
 
-# @deco_time
 def comma_to_dot(
     path_data: str, *,
-    flag_reduce: bool = False
+    comment_line = 4
     ):
     """
     Заменяет все запятые на точки в файле прербразованном из PGC
-    Если параметр flag_reduce = True - тогда обрезает шапку которая по умолчанию
+    Если параметр comment_line- колличество строк к которым унжно добавить знак комментария
     в PGC занимает 4 строки
     """
-    # Костыль, обрезает шапку если флаг = 1
-    reduce = 0
-    if flag_reduce:
-        reduce = 4
 
     if not os.path.exists(path_data):
         raise FileExistsError("invalid path")
@@ -32,10 +27,14 @@ def comma_to_dot(
 
             for i in range(len(text)):
                 text[i] = text[i].replace(",", ".")
+            
+            for i in range(comment_line):
+               text[i] = '#'+text[i]
+                
             file.close()
 
             file = open(os.path.join(root, name), "w")
-            file.writelines(text[reduce:])
+            file.writelines(text)
             file.close()
 
 
@@ -63,7 +62,7 @@ def txt_to_zip(
     for root, dirs, files in os.walk(".", topdown=False):
 
         for name in files:
-
+            print("Обрабатывается файл:" , os.path.join(root, name))
             # Открываем файлы
             file_in = open(os.path.join(root, name), "rb")
             file_out = bz2.open(

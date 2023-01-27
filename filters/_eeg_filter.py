@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from statistics import mean
-from scipy.fft import fft, ifft, fftfreq
+from scipy.fft import rfft, irfft, rfftfreq, fft, fftfreq
 
 class EegFilter:
     """
@@ -9,25 +9,26 @@ class EegFilter:
     На вход подаётся файл ЭЭГ для которого создаётся экземпляр класса и при желании размер окна w - !!именованный аргумент!!, значение по умолчанию 1501.
 
     После можно вызывать нужные методы
-    _moving_avg и _detrending - вспомагательные методы, считают скользящую среднюю и вычитают тренд соответсвенно
+    _moving_avg ,_fourier  и _detrending - вспомагательные методы, считают скользящую среднюю, фурье образ и вычитают тренд, соответсвенно
 
 
 
-    S_moving_avg- метод считает и возвращает скользящуюю среднюю - self.trend
+    moving_avg- метод считает и возвращает скользящуюю среднюю - self.trend
     detrend - метод вычитает тренд и взворащает детрендированный ряд но единичные пики не удаляются - self.detrend_data
     del_pick - метод удаляет резкие пики -  self.del_pick_data
-    get_data - метод возвращает кортеж  1 эллемент - тренд , 2 детрендированные данные без еденичных пиков
-    frequency_filter - фильтр частот
+    
+    frequency_filter - фильтр частот прини - self.clear_data. Принимает несколько именнованных и один обязательный аргумент:
+    sample_rate - частота дискретезации - целочисленное значение - обязательный параметр
+    notch_filter - режекторный фильтр - подаётся кортеж содержащий интервал который будет отфильтрован - по умолчанию обрезает 50+-1 Гц
+    low_pass_filter - фильтр пропускающий всё ниже указанной частоты по умолчанию задан значенеим None и неактивен
+    
     -------------------------------------------------------------------------------------------------------------------------------------------
-    All_processing - вызывает  S_moving_avg, detrend, del_pick
-    и позволяет обращаться ко всем вышеописанным атрибутам для дальнейшей работы:
+    Атрибуты:
     EEGProcess.trend;
     EEGProcess.detrend_data,;
     EEGProcess.del_pick_data;
     Атрибуты можно присвоить любой переменной для дальнейшей работы.
 
-    Сам метод All_processing  вызывает метод del_pick - поскольку обрабокта последовательная - каждый  метод вызывает метод находящийся над ним.
-    Метод создан для удобства и ничего не возвращает.
     --------------------------------------------------------------------------------------------------------------------------------------------
     """
 
@@ -55,7 +56,7 @@ class EegFilter:
         )
 
     # Скользящее среднее
-    def _moving_avg(self, x, w=1501):
+    def _moving_avg(self, x, w):
 
         cumsum = np.cumsum(np.insert(x, 0, 0))
         return (cumsum[w:] - cumsum[:-w]) / float(w)
@@ -73,14 +74,14 @@ class EegFilter:
         time_step = 1/sample_rate
         N = len(x)
         #Фурье образ
-        yf = fft(x)
+        yf = rfft(x)
         #Часты
-        xf = fftfreq(N, time_step)[:N//2]
+        xf = rfftfreq(N, time_step)[:N//2]
         #Зануляем ненужные частоты
         points_per_gZ = len(xf)/(sample_rate/2)
         #Убираем 50+-1 герц 
-        target_GZ_1 = int(points_per_gZ  *  (target_hz_1 - 1))
-        target_GZ_2 = int(points_per_gZ  * (target_hz_1 + 1))
+        target_GZ_1 = int(points_per_gZ  *  target_hz_1[0])
+        target_GZ_2 = int(points_per_gZ  * target_hz_1[1])
 
         yf[target_GZ_1:target_GZ_2] = 0
         
@@ -88,7 +89,7 @@ class EegFilter:
             target_GZ_3 = int(points_per_gZ  * 99)
             yf[target_GZ_3:] = 0
         
-        s = ifft(yf)
+        s = irfft(yf)
         return s
     
     # Расчёт скользящего среднего для указанного ряда 
@@ -106,7 +107,7 @@ class EegFilter:
     # Вычитание тренда
     def detrend(self) -> list:
         #инициализируем значение тренда
-        if trend.any() == 0:
+        if self.trend.any() == 0:
             self.moving_avg()
         # Заполняем таймлайн
         self.detrend_data[:, 0] = self.EEG_data[
@@ -135,24 +136,24 @@ class EegFilter:
 
         return self.del_pick_data
     
-    def frequency_filter(self, sample_rate,*, target_hz_1 = 50, target_hz_2 = None):
+    def frequency_filter(self, sample_rate: int ,* , notch_filter: tuple = (49,50), low_pass_filter: int = None):
         self.clear_data[:, 0] = self.EEG_data[
             self._Half : len(self.EEG_data) - self._Half, 0
         ]
         
         if self.del_pick_data is None:
             for i in range(1, np.shape(self.detrend_data)[1]):
-                self.clear_data[:, i] = self._fourier(self.detrend_data[:, i], sample_rate, target_hz_1 = target_hz_1, target_hz_2 = target_hz_2)
+                self.clear_data[:, i] = self._fourier(self.detrend_data[:, i], sample_rate, target_hz_1 = notch_filter, target_hz_2 = low_pass_filter)
         
         else:
             for i in range(1, np.shape(self.del_pick_data)[1]):
-                self.clear_data[:, i] = self._fourier(self.del_pick_data[:, i], sample_rate, target_hz_1 = target_hz_1, target_hz_2 = target_hz_2)
+                self.clear_data[:, i] = self._fourier(self.del_pick_data[:, i], sample_rate, target_hz_1 = notch_filter, target_hz_2 = low_pass_filter)
             
         return self.clear_data
                 
         
 
-    def plot_ft(self, name_, sample_rate,*, line_num = 1, show_all = False):
+    def plot_ft(self, name_: str, sample_rate: int ,*, line_num = 1, show_all = False):
         """
         Рисует спектр сигналов
         name_ - какую версию сигнала отбразить

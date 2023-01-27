@@ -67,7 +67,7 @@ def stream_filter(
                     
                 #Сохраняем ряд
                 np.savetxt(os.path.join(root, name.replace(".txt", root.replace("\\", "")+"_trend.txt")), trend)
-                np.savetxt(os.path.join(root, name.replace(".txt", root.replace("\\", "")+"_clear.txt")), clear_data)
+                np.savetxt(os.path.join(root, name.replace(".txt", root.replace("\\", "")+"_clear.txt")), clear_data.real)
 
 
 

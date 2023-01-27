@@ -10,10 +10,10 @@ import eeg_filter.filters as filters
 import eeg_filter.stream_processing as sp 
 
 #Модуль содержит функции обработки только что сконвертированных PGC файлов - указывать путь к каталогу с файлами
-import eeg_filter.pgc as pgc
+from eeg_filter.pgc import pgc
 
 #Модуль содержит функция построения и схоранения графиков описания лежат в файле
-import eeg_filter.ploting as ploting
+from eeg_filter.ploting import ploting
 
 if __name__ == "__main__":
 
@@ -22,7 +22,7 @@ if __name__ == "__main__":
     path = r"C:\Users\insec\Desktop\Тесты обработки\РД-амигдала-М1"
     #path_copy = r"C:\Users\insec\Desktop\Тесты обработки\РД-амигдала-М1_copy"
     sample_rate = 1000
-    Hz_1 = 50
+    Hz_1 = (49,51)
     Hz_2 = 99
     
     #Изменение запятых на точки
@@ -42,7 +42,7 @@ if __name__ == "__main__":
 
     #Вычитание скользящего среднего
     #f_data.detrend()
-    #f_data.frequency_filter(sample_rate, target_hz_1 = Hz_1, target_hz_2 = Hz_2 )
+    #f_data.frequency_filter(sample_rate, notch_filter = Hz_1, low_pass_filter = Hz_2 )
     
     #Удаление пиков
     #f_data.del_pick()
@@ -69,7 +69,7 @@ if __name__ == "__main__":
     #sp.stream_filter(path)
     
 # Вывод графика
-    #ploting.ploter(X)
+    ploting.ploter(X)
     #ploting.ploter(X2)
     #f_data.plot_ft("clear_data", sample_rate)
     
