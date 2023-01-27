@@ -1,5 +1,7 @@
 import numpy as np 
 import matplotlib.pyplot as plt
+import time
+import shutil
 
 #Модуль содержит класс с фильтрами 
 import eeg_filter.filters as filters
@@ -13,16 +15,18 @@ import eeg_filter.pgc as pgc
 #Модуль содержит функция построения и схоранения графиков описания лежат в файле
 import eeg_filter.ploting as ploting
 
-
 if __name__ == "__main__":
-    
+
     #Пути к файлам 
-    X = np.loadtxt(r"C:\Users\Arzdez\Desktop\eeg_filter\274-19.06\baseline.txt")
-    #path = r"C:\Users\insec\Desktop\Mous\RD\РД-амигдала-М1"
-    #path_archive = r"C:\Users\insec\Desktop\Mous\arch"
+    X = np.loadtxt(r"C:\Users\insec\Desktop\Тесты обработки\РД-амигдала-М1\281-10.07.18\RD_Am_R+.txt")
+    path = r"C:\Users\insec\Desktop\Тесты обработки\РД-амигдала-М1"
+    #path_copy = r"C:\Users\insec\Desktop\Тесты обработки\РД-амигдала-М1_copy"
+    sample_rate = 1000
+    Hz_1 = 50
+    Hz_2 = 99
     
-    #Изменение точек на запятые
-    #pgc.comma_to_dot(path)
+    #Изменение запятых на точки
+    #pgc.comma_to_dot(path, flag_reduce = True)
     
     #Архивация данных
     #pgc.txt_to_zip(path_data, path_archive)
@@ -33,35 +37,39 @@ if __name__ == "__main__":
     #подробная инструкция к классу указана в файле класса
     #f_data = filters.EegFilter(X)
     
-    #Расчёт и скользяего среднего
+    #Расчёт  скользящего среднего
     #f_data.moving_avg()
 
     #Вычитание скользящего среднего
     #f_data.detrend()
+    #f_data.frequency_filter(sample_rate, target_hz_1 = Hz_1, target_hz_2 = Hz_2 )
     
     #Удаление пиков
     #f_data.del_pick()
-    
-    #Полная обработка файла всеми фильтрами - пока что бесполезная функция - так как полную обрабокту выполняет del_pick - вызывая прошлые методы и работая с их данными
-    #позже добавлю обработку одним фильтром
-    #f_data.all_processing()
-    
+
     #Возвращает кортеж содержащий скользщее среднее и обработанный сигнал
     #X,Y = f_data.get_data()
     
     #Обращенние к атрибутам класса
+    #Обращение к детрендированному ряду
+    #X1 = f_data.detrend_data
     #Обращение к полностью обработанной копии
-    #X2 = f_data.del_pick_data
+    #X2 = f_data.clear_data
     
+    #print(X2)
     #Обращение к атрибуту который содержит тренд
-    #f_data.trend
-    
+    #X3 =f_data.trend
+    #обращение к ряду без пиков
+    #X4 = f_data.del_pick_data
+        
     #Обращение к атрибуту содержащему детрендированный сигнал 
-    #X2 = f_data.detrend_data
-    
+    #X4 = f_data.detrend_data
 #--------------------------------------------------------------------------------------------------------------------
-    #Фильтрация нескольких файлов по указанному пути
+    #Потоковая обработка
     #sp.stream_filter(path)
     
+# Вывод графика
+    #ploting.ploter(X)
     #ploting.ploter(X2)
+    #f_data.plot_ft("clear_data", sample_rate)
     
