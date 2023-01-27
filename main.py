@@ -10,10 +10,10 @@ import eeg_filter.filters as filters
 import eeg_filter.stream_processing as sp 
 
 #Модуль содержит функции обработки только что сконвертированных PGC файлов - указывать путь к каталогу с файлами
-from eeg_filter.pgc import pgc
+import eeg_filter.pgc as pgc
 
 #Модуль содержит функция построения и схоранения графиков
-from eeg_filter.ploting import ploting
+import eeg_filter.ploting as ploting
 
 if __name__ == "__main__":
 
