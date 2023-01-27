@@ -63,30 +63,6 @@ class EegFilter:
         X_detred = np.subtract(x[w2:len(x)-w2],y)
 
         return X_detred
-    def _fourier(self, X, sample_rate, plot_spectrum  = False ):
-        time_step = 1/sample_rate
-        N = len(X)
-        #Фурье образ
-        yf = fft(X)
-        #Часты
-        xf = fftfreq(N, time_step)[:N//2]
-        
-        #Зануляем ненужные частоты
-        points_per_gZ = len(xf)/(sample_rate/2)
-        #Убираем 50+-1 герц 
-        target_GZ_1 = int(points_per_gZ  * 49)
-        target_GZ_2 = int(points_per_gZ  * 51)
-        target_GZ_3 = int(points_per_gZ  * 99)
-        yf[target_GZ_1:target_GZ_2] = 0
-        yf[target_GZ_3:] = 0
-    
-    #убираем всё от 99 герц
-        if plot_spectrum:
-            plt.plot(xf, 2./N * np.abs(yf[0:N//2]))
-            plt.show()
-    
-        return ifft(yf)
-
     # Расчтё скользящего среднего для указанного ряда
     def moving_avg(self) -> list:
         # Заполняем таймлайн
@@ -134,10 +110,7 @@ class EegFilter:
 
         return self.del_pick_data
     
-    def filter_fft(self):
-        
-        for i in range(1, np.shape(self.EEG_data)[1]):
-            self.clear_data[:, i] = self._fourier(self.del_pick_data[:, i], 1000, True)
+
             
         
 
