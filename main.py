@@ -26,7 +26,7 @@ if __name__ == "__main__":
     #Hz_2 = 99
     
     #Изменение запятых на точки
-    #pgc.comma_to_dot(path, flag_reduce = True)
+    #pgc.comma_to_dot(path, comment_line = 4)
     
     #Архивация данных
     #pgc.txt_to_zip(path_data, path_archive)
