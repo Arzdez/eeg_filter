@@ -24,6 +24,7 @@ def stream_filter(
     ploting - если True - по указанному пути вместе с обработанными копиями будут сохраняться изображения графиков;
     chanels - подаётся картеж с именами каналов;
     window - ширина окна;
+    sample_rate - частота дискретизации.
     """
     #Имена отведений
     if chanels is None:
@@ -35,10 +36,8 @@ def stream_filter(
             "Cx_occip_L"
         )
         
-        
-    window = 1501
     os.chdir(path)
-
+    
     for root, dirs, files in os.walk(".", topdown=False):
         for name in files:
             if ".txt" in name:
