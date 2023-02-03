@@ -86,7 +86,7 @@ def stream_filter_parallel(
     
     #Создаём пул с процессами для оработки
     with  mp.Pool(processes = thread ) as work:
-        work.starmap(processing, path_tuple)
+        work.starmap(_processing, path_tuple)
 
 
 

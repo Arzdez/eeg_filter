@@ -37,7 +37,9 @@ def comma_to_dot_parallel(
     в PGC занимает 4 строки
     вариант с параллельной обрботкой. Поумолчанию берётся значение 7 процессов, для 8 ядерных машин - оптимально
     """
+    
     path_tuple = []
+    thread = 7
 
     if not os.path.exists(path_data):
         raise FileExistsError("invalid path")
@@ -50,10 +52,13 @@ def comma_to_dot_parallel(
             path_tuple.append(os.path.join(root, name))
     
     
-    thread = 7
+
     
     with mp.Pool(processes = thread ) as work:
-        work.map(ctd, path_tuple)
+        work.map(_ctd, path_tuple)
+        
+        
+        
 
 # path_data,path_archive пути до данных и до папки где будут храниться архивные данные
 def txt_to_zip(
