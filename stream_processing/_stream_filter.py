@@ -5,7 +5,6 @@ import os
 from eeg_filter.filters import EegFilter
 
 
-
 def stream_filter(
     path: str, *,
     ploting: bool = False,
@@ -42,7 +41,7 @@ def stream_filter(
         for name in files:
             if ".txt" in name:
                 print("Обрабатывается файл:" , os.path.join(root, name))
-                input_data = np.loadtxt(os.path.join(root, name))
+                input_data = np.loadtxt(os.path.join(root, name), comments="#")
                 time = input_data[:, 0]
                 
                 ready_data = EegFilter(input_data, w = window)
@@ -67,6 +66,7 @@ def stream_filter(
                 #Сохраняем ряд
                 np.savetxt(os.path.join(root, name.replace(".txt", root.replace("\\", "")+"_trend.txt")), trend)
                 np.savetxt(os.path.join(root, name.replace(".txt", root.replace("\\", "")+"_clear.txt")), clear_data.real)
+
 
 
 
