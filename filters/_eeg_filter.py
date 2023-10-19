@@ -16,11 +16,11 @@ class EegFilter:
 
     moving_avg- метод считает и возвращает скользящуюю среднюю - self.trend
     detrend - метод вычитает тренд и взворащает детрендированный ряд но единичные пики не удаляются - self.detrend_data
-    del_pick - метод удаляет резкие пики -  self.del_pick_data
 
     frequency_filter - фильтр частот - self.clear_data. Принимает несколько именнованных и один обязательный аргумент:
         sample_rate - частота дискретезации - целочисленное значение - обязательный параметр
         notch_filter - режекторный фильтр - подаётся кортеж содержащий интервал который будет отфильтрован - по умолчанию обрезает 50+-1 Гц
+        
     low_pass_filter - фильтр пропускающий всё ниже указанной частоты по умолчанию задан значенеим None и неактивен
 
 
@@ -55,12 +55,12 @@ class EegFilter:
         )
 
     # Скользящее среднее - ОПТИМАЛЬНО
-    def _moving_avg(self, x, w):
+    def _moving_avg(self, x: list, w: int) -> list:
         cumsum = np.cumsum(np.insert(x, 0, 0))
         return (cumsum[w:] - cumsum[:-w]) / float(w)
 
     # Фурье преобразование
-    def _fourier(self, x, sample_rate, *, notch_filter, low_pass_filter):
+    def _fourier(self, x: list, sample_rate: int, *, notch_filter: tuple, low_pass_filter: int) -> np.array:
         time_step = 1 / sample_rate
         N = len(x)
         # Фурье образ
@@ -79,18 +79,18 @@ class EegFilter:
             target_gz_3 = int(points_per_gz * 99)
             yf[target_gz_3:] = 0
 
-        s = irfft(yf)
-        return s
+        final = irfft(yf)
+        return final
 
     # Расчёт скользящего среднего для указанного ряда
-    def moving_avg(self) -> list:
+    def moving_avg(self):
         for i in range(1, np.shape(self.eeg_data)[1]):
             self.trend[:, i] = self._moving_avg(self.eeg_data[:, i], self.W)
 
         return self.trend
 
     # Вычитание тренда
-    def detrend(self) -> list:
+    def detrend(self):
         # Инициализируем расчёт тренда если не был вызван соответсвующий метод
         if self.trend.any() == 0:
             self.moving_avg()    

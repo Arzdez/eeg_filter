@@ -3,14 +3,14 @@ import matplotlib.pyplot as plt
 
 
 def ploter(
-    data,
+    data: list,
     *,
-    time_in_data=True,
-    sample_rate=1000,
-    figsize=(18, 9),
-    save=False,
-    filename="Figure",
-    title=None,
+    time_in_data: bool = True,
+    sample_rate: int = 1000,
+    figsize: tuple = (18, 9),
+    save: bool =False,
+    filename: str ="Figure",
+    title: list = None,
 ):
     """
     Принимает на вход n-мерный массив data и строит визуализацию;

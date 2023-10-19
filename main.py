@@ -18,8 +18,8 @@ if __name__ == "__main__":
     
     #X = r"E:\Рабочий стол\mouse Cx_RD+\273-19.06\RD_Cx_L+_trend.txt"
     #Пути к файлам 
-    X = np.loadtxt(r"C:\Users\insec\OneDrive\Рабочий стол\273-19.06\RD_Cx_L+_trend.txt")
-    #path = r"C:\Users\insec\Desktop\РД - кора S1-M1_txt"
+    #X = np.loadtxt(r"C:\Users\insec\OneDrive\Рабочий стол\273-19.06\RD_Cx_L+_trend.txt")
+    path = r"C:\Users\insec\OneDrive\Рабочий стол\Mic for articl"
     #path_archive = r"C:\Users\insec\Desktop\RD_txt\New data\rat 10 - test 1 - 7.11.22_zip"
     #path_copy = r"C:\Users\insec\Desktop\Тесты обработки\РД-амигдала-М1_copy"
     #sample_rate = 1000
@@ -27,7 +27,7 @@ if __name__ == "__main__":
     #Hz_2 = 99
     
     #Изменение запятых на точки - не акутально в связи с возможностью конвертирования через matlab и python, но оставляю на всякий случай
-    #pgc.comma_to_dot(r"C:\Users\arzdez\Desktop\РД_крысы_текст", comment_line = 4)
+    #pgc.comma_to_dot(path, comment_line = 4)
     
     #Архивация данных
     #pgc.txt_to_zip(path, path_archive)
@@ -69,7 +69,7 @@ if __name__ == "__main__":
     #Потоковая обработка
     #sp.stream_filter(path, ploting=True)
     
-    #sp.stream_filter_parallel(r"C:\Users\arzdez\Desktop\РД_крысы_текст", ploting = False)
+    sp.stream_filter_parallel(path, ploting = True)
 # Вывод графика
-    ploting.ploter(X)
+    #ploting.ploter(X)
     #f_data.plot_ft("clear_data", sample_rate,show_all=True)

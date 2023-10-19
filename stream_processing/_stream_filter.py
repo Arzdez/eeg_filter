@@ -10,7 +10,7 @@ def stream_filter(
     ploting: bool = False,
     chanels: tuple = None,
     window: int = 1501,
-    sample_rate = 1000 ) -> None:
+    sample_rate: int = 1000 ) -> None:
     """
     Обрабатывает все .txt файлы по указанному пути.
     Если файлы лежат в поддиректориях то структура останется. 
