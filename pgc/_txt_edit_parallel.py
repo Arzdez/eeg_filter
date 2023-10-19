@@ -5,7 +5,7 @@ import bz2
 import multiprocessing as mp 
 from functools import partial
 
-def _ctd(path,*, comment_line = 4):
+def _ctd(path: str,*, comment_line: int = 4):
 
     print("Обрабатывается файл:" , path)
     files = open(path, "r")
@@ -26,7 +26,7 @@ def _ctd(path,*, comment_line = 4):
 
 def comma_to_dot_parallel(
     path_data: str, *,
-    comment_line = 4
+    comment_line: int = 4
     ):
     """
     Заменяет все запятые на точки в файле прербразованном из PGC

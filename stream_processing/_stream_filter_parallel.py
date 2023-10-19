@@ -12,9 +12,9 @@ def _processing(
     ploting: bool = True,
     chanels: tuple = None,
     window: int = 1501,
-    sample_rate = 1000,
-    low_pass_filter = 99,
-    notch_filter = (49,51)) -> None:
+    sample_rate: int = 1000,
+    low_pass_filter: int = 99,
+    notch_filter: tuple = (49,51)) -> None:
     
     if chanels is None:
         chanels = (
@@ -64,7 +64,7 @@ def stream_filter_parallel(
     ploting: bool = False,
     chanels: tuple = None,
     window: int = 1501,
-    sample_rate = 1000 ) -> None:
+    sample_rate: int = 1000 ) -> None:
     """
     Обрабатывает все .txt файлы по указанному пути.
     Если файлы лежат в поддиректориях то структура останется. 

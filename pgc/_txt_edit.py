@@ -6,7 +6,7 @@ import bz2
 
 def comma_to_dot(
     path_data: str, *,
-    comment_line = 4
+    comment_line: int = 4
     ):
     """
     Заменяет все запятые на точки в файле прербразованном из PGC
