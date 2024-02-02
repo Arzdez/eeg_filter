@@ -19,10 +19,10 @@ def _processing(
     if chanels is None:
         chanels = (
             "time", 
-            "Cd_R", 
-            "Cd_L", 
-            "Cx_occip_R", 
-            "Cx_occip_L"
+            "Cd R", 
+            "Cd L", 
+            "Cx R", 
+            "Cx L"
         )
          
     print("Обрабатывается файл: " , path)
@@ -37,26 +37,32 @@ def _processing(
     #ready_data.del_pick()
     ready_data.frequency_filter(sample_rate, notch_filter =notch_filter, low_pass_filter = low_pass_filter)
     trend = ready_data.trend
-    clear_data= ready_data.clear_data
+    clear_data= ready_data.clear_data.real
 
     times = clear_data[:,0]
     #Если заданно то рисуем для каждого канала его чистую версию и тренд
     if ploting:
         for i in range(1, np.shape(input_data)[1]):
-            plt.subplot(2, 1, 1)
-            plt.title(f"Тренд  {chanels[i]}")
-            plt.plot(times, trend[:, i])
-            plt.subplot(2, 1, 2)
-            plt.title(f"Отфильтрованный сигнал {chanels[i]} ")
-            plt.plot(times, clear_data[:, i])
+            #plt.subplot(2, 1, 1)
+            plt.figure(figsize=(16,8))
+            plt.xlabel("time, s")
+            plt.ylabel("U, mV")
+            plt.title(f"{chanels[i]}")
+            #plt.plot(times, trend[:, i], color = "black")
+            #plt.subplot(2, 1, 2)
+            #plt.title(f"Отфильтрованный сигнал {chanels[i]} ")
+            plt.plot(times, clear_data[:, i], color = "black")
             plt.tight_layout()
-            plt.savefig(os.path.join(path.replace(".txt", f"_{chanels[i]}.png")),   dpi=1000)
+            plt.xlim(0,600)
+            plt.minorticks_on()
+            plt.grid(which='major')
+            plt.savefig(os.path.join(path.replace(".txt", f"_{chanels[i]}.pdf")),   dpi=1000)
             plt.close()
                     
     #Сохраняем ряды
     print("Сохраняю: ", path)
     np.savetxt(os.path.join(path.replace(".txt", "_trend.txt")), trend)
-    np.savetxt(os.path.join(path.replace(".txt", "_clear.txt")), clear_data.real)
+    np.savetxt(os.path.join(path.replace(".txt", "_clear.txt")), clear_data)
 
 
 def stream_filter_parallel(
@@ -86,8 +92,8 @@ def stream_filter_parallel(
             "time", 
             "Cd_R", 
             "Cd_L", 
-            "Cx_occip_R", 
-            "Cx_occip_L"
+            "Cx R", 
+            "Cx L"
         )
         
     os.chdir(path)
@@ -105,8 +111,8 @@ def stream_filter_parallel(
                 path_tuple.append(os.path.join(root, name))
 
     #ограничение на число процессов
-    if len(path_tuple) > 8:
-        thread = 8
+    if len(path_tuple) > 10:
+        thread = 10
     else:
         thread = len(path_tuple)
     

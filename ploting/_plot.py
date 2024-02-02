@@ -1,4 +1,7 @@
 import numpy as np
+import mplcatppuccin
+from mplcatppuccin.palette import load_color
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 
 
@@ -11,6 +14,7 @@ def ploter(
     save: bool =False,
     filename: str ="Figure",
     title: list = None,
+    theme: bool = False,
 ):
     """
     Принимает на вход n-мерный массив data и строит визуализацию;
@@ -34,29 +38,31 @@ def ploter(
         time_line = data[:, 0]
         num_of_rows_sub = num_of_rows - 1
         start_index = 1
+        
+    if theme:
+        mpl.style.use("mocha")
+        color = load_color("mocha", "green")
+    else:
+        color = "black"   
 
     num_changer = 0
     plt.figure(figsize=figsize)
     for i in range(start_index, num_of_rows):
         plt.subplot(num_of_rows_sub, 1, num_changer + 1)
 
-        if title is None:
-            plt.title(f"Channel {num_changer+1}")
-        else:
+        if title is not None:
             print(title[num_changer])
             plt.title(title[num_changer])
 
+
+
         plt.grid()
-        plt.plot(time_line, data[:, i])
+        plt.xlabel("time,c")
+        plt.ylabel("U, мВ")
+        plt.plot(time_line, data[:, i],color=color)
         num_changer += 1
 
     plt.tight_layout()
     if save:
         plt.savefig(filename + ".pdf")
     plt.show()
-
-
-if __name__ == "__main__":
-    x = np.loadtxt(r"RD_Cx_L+.txt")
-    title = ["a","b","c",'d','e']
-    ploter(x, time_in_data=False, title=title, save=True)
