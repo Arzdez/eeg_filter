@@ -15,6 +15,7 @@ def ploter(
     filename: str ="Figure",
     title: list = None,
     theme: bool = False,
+    color: str = "black",
 ):
     """
     Принимает на вход n-мерный массив data и строит визуализацию;
@@ -42,8 +43,6 @@ def ploter(
     if theme:
         mpl.style.use("mocha")
         color = load_color("mocha", "green")
-    else:
-        color = "black"   
 
     num_changer = 0
     plt.figure(figsize=figsize)

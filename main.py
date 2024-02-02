@@ -72,7 +72,7 @@ if __name__ == "__main__":
     
    # sp.stream_filter_parallel(path, ploting = True)
 # Вывод графика
-    ploting.ploter(X,figsize=(23,15),time_in_data=True,save=True, theme=False)
+    ploting.ploter(X,figsize=(23,15),time_in_data=True,save=True,theme=False)
     #f_data.plot_ft("clear_data", sample_rate,show_all=True)
     #pass
     
